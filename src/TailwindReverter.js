@@ -13,6 +13,9 @@ export default class TwReverter {
         this.stylesheet[className] = converted;
     }
 
+    /**
+     * @param {string} varname 
+     */
     addVar(varname) {
         if (varname in vars) {
             this.stylesheet[':root'] = this.stylesheet[':root'] || {};
@@ -34,6 +37,21 @@ export default class TwReverter {
         for (const clazz of classList) {
             if (clazz.startsWith('text-')) {
                 this.convertTwTextClass(result, clazz);
+            }
+            else if (clazz.startsWith('bg-')) {
+                this.convertTwBgClass(result, clazz);
+            }
+            else if (clazz.startsWith('from-')) {
+                const color = clazz.replace(/^from\-/, '');
+                const varname = `--tw-${color}`;
+                this.addVar(varname);
+                result['--tw-gradient-from'] = `var(${varname}) var(--tw-gradient-from-position)`;
+            }
+            else if (clazz.startsWith('to-')) {
+                const color = clazz.replace(/^to\-/, '');
+                const varname = `--tw-${color}`;
+                this.addVar(varname);
+                result['--tw-gradient-to'] = `var(${varname}) var(--tw-gradient-to-position)`;
             }
             else {
                 console.log(`unrecognized class type: ${clazz}`);
@@ -85,6 +103,60 @@ export default class TwReverter {
             const varname = `--tw-${mod}`;
             this.addVar(varname);
             result['color'] = `var(${varname})`;
+        }
+        else {
+            console.log(`unrecognized modifier: ${mod}`);
+        }
+    }
+
+    /**
+     * @param {{ [string]:string }} result 
+     * @param {string} clazz 
+     */
+    convertTwBgClass(result, clazz) {
+        const mod = clazz.replace(/^bg\-/, '');
+        if (mod === 'black' || mod === 'white') {
+            result['background-color'] = mod;
+        }
+        else if (/\-\d{3}$/.test(mod)) {
+            const varname = `--tw-${mod}`;
+            this.addVar(varname);
+            result['background-color'] = `var(${varname})`;
+        }
+        else if (mod === 'none') {
+            result['background-image'] = 'none';
+        }
+        else if (mod === 'gradient-to-t') {
+            result['background-image'] = 'linear-gradient(to top, var(--tw-gradient-stops))';
+            result['--tw-gradient-stops'] = 'var(--tw-gradient-from), var(--tw-gradient-to)';
+        }
+        else if (mod === 'gradient-to-tr') {
+            result['background-image'] = 'linear-gradient(to top right, var(--tw-gradient-stops))';
+            result['--tw-gradient-stops'] = 'var(--tw-gradient-from), var(--tw-gradient-to)';
+        }
+        else if (mod === 'gradient-to-r') {
+            result['background-image'] = 'linear-gradient(to right, var(--tw-gradient-stops))';
+            result['--tw-gradient-stops'] = 'var(--tw-gradient-from), var(--tw-gradient-to)';
+        }
+        else if (mod === 'gradient-to-br') {
+            result['background-image'] = 'linear-gradient(to bottom right, var(--tw-gradient-stops))';
+            result['--tw-gradient-stops'] = 'var(--tw-gradient-from), var(--tw-gradient-to)';
+        }
+        else if (mod === 'gradient-to-b') {
+            result['background-image'] = 'linear-gradient(to bottom, var(--tw-gradient-stops))';
+            result['--tw-gradient-stops'] = 'var(--tw-gradient-from), var(--tw-gradient-to)';
+        }
+        else if (mod === 'gradient-to-bl') {
+            result['background-image'] = 'linear-gradient(to bottom left, var(--tw-gradient-stops))';
+            result['--tw-gradient-stops'] = 'var(--tw-gradient-from), var(--tw-gradient-to)';
+        }
+        else if (mod === 'gradient-to-l') {
+            result['background-image'] = 'linear-gradient(to left, var(--tw-gradient-stops))';
+            result['--tw-gradient-stops'] = 'var(--tw-gradient-from), var(--tw-gradient-to)';
+        }
+        else if (mod === 'gradient-to-tl') {
+            result['background-image'] = 'linear-gradient(to top left, var(--tw-gradient-stops))';
+            result['--tw-gradient-stops'] = 'var(--tw-gradient-from), var(--tw-gradient-to)';
         }
         else {
             console.log(`unrecognized modifier: ${mod}`);
