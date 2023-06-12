@@ -24,6 +24,9 @@ export default class TwReverter {
             if (clazz.startsWith('text-')) {
                 this.convertTwTextClass(result, clazz);
             }
+            else {
+                console.log(`unrecognized class type: ${clazz}`);
+            }
         }
 
         return result;
@@ -63,6 +66,15 @@ export default class TwReverter {
         }
         else if (mod === 'center') {
             result['text-align'] = 'center';
+        }
+        else if (mod === 'black' || mod === 'white') {
+            result['color'] = mod;
+        }
+        else if (/\-\d{3}$/.test(mod)) {
+            result['color'] = `var(--tw-${mod})`;
+        }
+        else {
+            console.log(`unrecognized modifier: ${mod}`);
         }
     }
 
