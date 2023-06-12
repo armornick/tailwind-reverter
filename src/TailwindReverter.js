@@ -1,3 +1,4 @@
+import vars from './tailwind-vars.js';
 
 export default class TwReverter {
 
@@ -10,6 +11,16 @@ export default class TwReverter {
     add(className, tailwindInput) {
         const converted = this.convertTwClasses(tailwindInput);
         this.stylesheet[className] = converted;
+    }
+
+    addVar(varname) {
+        if (varname in vars) {
+            this.stylesheet[':root'] = this.stylesheet[':root'] || {};
+            this.stylesheet[':root'][varname] = vars[varname];
+        }
+        else {
+            console.log(`ùnrecognized variable: ${varname}`);
+        }
     }
 
     /**
@@ -71,7 +82,9 @@ export default class TwReverter {
             result['color'] = mod;
         }
         else if (/\-\d{3}$/.test(mod)) {
-            result['color'] = `var(--tw-${mod})`;
+            const varname = `--tw-${mod}`;
+            this.addVar(varname);
+            result['color'] = `var(${varname})`;
         }
         else {
             console.log(`unrecognized modifier: ${mod}`);
