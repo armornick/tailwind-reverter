@@ -53,8 +53,7 @@ export default class TwReverter {
                 this.addVar(varname);
                 result['--tw-gradient-to'] = `var(${varname}) var(--tw-gradient-to-position)`;
             }
-            else if (clazz.startsWith('p-') || clazz.startsWith('px-') || clazz.startsWith('py-')
-                || clazz.startsWith('m-') || clazz.startsWith('mx-') || clazz.startsWith('my-')) {
+            else if (this.isSpacingClass(clazz)) {
                 this.convertTwSpacingClass(result, clazz);
             }
             else {
@@ -167,31 +166,48 @@ export default class TwReverter {
         }
     }
 
+    #RE_SPACING_CLASS = /^(p|m)(x|y|t|b|l|r)?\-/;
+
+    isSpacingClass(clazz) {
+        return this.#RE_SPACING_CLASS.test(clazz);
+    }
+
     /**
      * @param {{ [string]:string }} result 
      * @param {string} clazz 
      */
     convertTwSpacingClass(result, clazz) {
-        const [rawProp, size] = clazz.split('-');
+        const [_, box, pos] = this.#RE_SPACING_CLASS.exec(clazz);
+        const [_2, size] = clazz.split('-');
         
         let prop;
-        if (rawProp === 'p') {
+        if (box === 'p') {
             prop = 'padding';
         }
-        else if (rawProp === 'px') {
-            prop = 'padding-inline';
-        }
-        else if (rawProp === 'py') {
-            prop = 'padding-block';
-        }
-        else if (rawProp === 'm') {
+        else if (box === 'm') {
             prop = 'margin';
         }
-        else if (rawProp === 'mx') {
-            prop = 'margin-inline';
+        if (pos === 'x') {
+            prop += '-inline';
         }
-        else if (rawProp === 'my') {
-            prop = 'margin-block';
+        else if (pos === 'y') {
+            prop += '-block';
+        }
+        else if (pos === 't') {
+            prop += '-block-start';
+            // prop += '-top';
+        }
+        else if (pos === 'b') {
+            prop += '-block-end';
+            // prop += '-bottom';
+        }
+        else if (pos === 'l') {
+            prop += '-inline-start';
+            // prop += '-left';
+        }
+        else if (pos === 'r') {
+            prop += '-inline-end';
+            // prop += '-right';
         }
 
         if (size === 'auto') {
