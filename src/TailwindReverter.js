@@ -53,6 +53,10 @@ export default class TwReverter {
                 this.addVar(varname);
                 result['--tw-gradient-to'] = `var(${varname}) var(--tw-gradient-to-position)`;
             }
+            else if (clazz.startsWith('p-') || clazz.startsWith('px-') || clazz.startsWith('py-')
+                || clazz.startsWith('m-') || clazz.startsWith('mx-') || clazz.startsWith('my-')) {
+                this.convertTwSpacingClass(result, clazz);
+            }
             else {
                 console.log(`unrecognized class type: ${clazz}`);
             }
@@ -160,6 +164,43 @@ export default class TwReverter {
         }
         else {
             console.log(`unrecognized modifier: ${mod}`);
+        }
+    }
+
+    /**
+     * @param {{ [string]:string }} result 
+     * @param {string} clazz 
+     */
+    convertTwSpacingClass(result, clazz) {
+        const [rawProp, size] = clazz.split('-');
+        
+        let prop;
+        if (rawProp === 'p') {
+            prop = 'padding';
+        }
+        else if (rawProp === 'px') {
+            prop = 'padding-inline';
+        }
+        else if (rawProp === 'py') {
+            prop = 'padding-block';
+        }
+        else if (rawProp === 'm') {
+            prop = 'margin';
+        }
+        else if (rawProp === 'mx') {
+            prop = 'margin-inline';
+        }
+        else if (rawProp === 'my') {
+            prop = 'margin-block';
+        }
+
+        if (size === 'auto') {
+            result[prop] = 'auto';
+        }
+        else {
+            const varname = `--tw-size-${size}`;
+            this.addVar(varname);
+            result[prop] = `var(${varname})`;
         }
     }
 
