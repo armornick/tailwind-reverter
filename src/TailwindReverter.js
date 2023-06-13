@@ -56,6 +56,13 @@ export default class TwReverter {
             else if (this.isSpacingClass(clazz)) {
                 this.convertTwSpacingClass(result, clazz);
             }
+            else if (clazz.startsWith('rounded')) {
+                const varname = `--tw-${clazz}`;
+                if (varname in vars) {
+                    this.addVar(varname);
+                    result['border-radius'] = `var(${varname})`;
+                }
+            }
             else {
                 console.log(`unrecognized class type: ${clazz}`);
             }

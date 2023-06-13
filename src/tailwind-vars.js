@@ -307,4 +307,14 @@ export default {
     '--tw-size-72': '18rem', /* 288px */
     '--tw-size-80': '20rem', /* 320px */
     '--tw-size-96': '24rem', /* 384px */
+
+    /* Border Radius */
+    '--tw-rounded-none': '0px',
+    '--tw-rounded-sm':   '0.125rem', /* 2px */
+    '--tw-rounded':      '0.25rem', /* 4px */
+    '--tw-rounded-md':   '0.375rem', /* 6px */
+    '--tw-rounded-lg':   '0.5rem', /* 8px */
+    '--tw-rounded-xl':   '0.75rem', /* 12px */
+    '--tw-rounded-2xl':  '1rem', /* 16px */
+    '--tw-rounded-3xl':  '1.5rem', /* 24px */
 }
