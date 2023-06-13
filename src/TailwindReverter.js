@@ -175,6 +175,10 @@ export default class TwReverter {
 
     #RE_SPACING_CLASS = /^(p|m)(x|y|t|b|l|r)?\-/;
 
+    /**
+     * @param {string} clazz 
+     * @returns {boolean}
+     */
     isSpacingClass(clazz) {
         return this.#RE_SPACING_CLASS.test(clazz);
     }
